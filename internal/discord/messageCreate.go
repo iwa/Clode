@@ -1,6 +1,11 @@
 package discord
 
-import "github.com/bwmarrin/discordgo"
+import (
+	"fmt"
+	"strings"
+
+	"github.com/bwmarrin/discordgo"
+)
 
 // handler for incoming messages
 func (c *DiscordClient) messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
@@ -34,4 +39,26 @@ func (c *DiscordClient) shouldRespondToMessage(m *discordgo.MessageCreate) bool 
 	}
 
 	return false
+}
+
+func (c *DiscordClient) cleanMessageContent(msg *discordgo.Message) string {
+	// Replace bot mentions
+	cleaned := strings.ReplaceAll(msg.Content, fmt.Sprintf("<@%s>", c.botID), "@Assistant")
+
+	// Replace user mentions by @username
+	for _, user := range msg.Mentions {
+		cleaned = strings.ReplaceAll(cleaned, fmt.Sprintf("<@%s>", user.ID), "@"+user.Username)
+	}
+
+	// Replace role mentions by @role
+	for _, roleID := range msg.MentionRoles {
+		role, err := c.session.State.Role(msg.GuildID, roleID)
+		if err == nil {
+			cleaned = strings.ReplaceAll(cleaned, fmt.Sprintf("<@&%s>", roleID), "@"+role.Name)
+		}
+	}
+
+	cleaned = strings.TrimSpace(cleaned)
+
+	return cleaned
 }
