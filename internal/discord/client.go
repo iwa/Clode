@@ -23,6 +23,8 @@ func NewDiscordClient(discordToken string) (*DiscordClient, error) {
 
 	client.session.Identify.Intents = discordgo.IntentsGuildMessages | discordgo.IntentsDirectMessages | discordgo.IntentsMessageContent
 
+	client.session.AddHandler(client.messageCreate)
+
 	return client, nil
 }
 
