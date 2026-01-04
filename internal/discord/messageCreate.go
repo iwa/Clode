@@ -2,6 +2,7 @@ package discord
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -20,7 +21,31 @@ func (c *DiscordClient) messageCreate(s *discordgo.Session, m *discordgo.Message
 		return
 	}
 
-	// TODO: add all the logic to read messages and generate response...
+	// Show typing indicator
+	err := s.ChannelTyping(m.ChannelID)
+	if err != nil {
+		log.Printf("Error sending typing indicator: %v", err)
+	}
+
+	// Get conversation context
+	messages, err := b.buildConversationContext(s, m)
+	if err != nil {
+		log.Printf("Error building conversation context: %v", err)
+		return
+	}
+
+	// Get response from Mistral AI
+	response, err := b.mistralClient.Chat(messages)
+	if err != nil {
+		log.Printf("Error getting response from AI: %v", err)
+		return
+	}
+
+	// Send the response
+	_, err = s.ChannelMessageSendReply(m.ChannelID, response, m.Reference())
+	if err != nil {
+		log.Printf("Error sending message: %v", err)
+	}
 }
 
 // shouldRespondToMessage checks if the bot should respond to the given message
