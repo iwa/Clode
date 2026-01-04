@@ -12,7 +12,9 @@ type AIMessage struct {
 	Content string `json:"content"`
 }
 
-const maxHistoryDepth = 10
+const (
+	maxHistoryDepth = 10
+)
 
 // buildConversationContext builds the conversation history for the AI
 // recursively fetches the reply chain up to a maximum depth of 10 messages
