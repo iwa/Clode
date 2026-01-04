@@ -4,13 +4,8 @@ import (
 	"log"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/iwa/clode/internal/ai"
 )
-
-// AIMessage represents a chat message in AI thread
-type AIMessage struct {
-	Role    string `json:"role"`
-	Content string `json:"content"`
-}
 
 const (
 	maxHistoryDepth = 10
@@ -18,8 +13,8 @@ const (
 
 // buildConversationContext builds the conversation history for the AI
 // recursively fetches the reply chain up to a maximum depth of 10 messages
-func (c *DiscordClient) buildConversationContext(s *discordgo.Session, m *discordgo.MessageCreate) ([]AIMessage, error) {
-	var messages []AIMessage
+func (c *DiscordClient) buildConversationContext(s *discordgo.Session, m *discordgo.MessageCreate) ([]ai.AIMessage, error) {
+	var messages []ai.AIMessage
 
 	// If this is a reply, recursively fetch the reply chain
 	if m.ReferencedMessage != nil {
@@ -32,7 +27,7 @@ func (c *DiscordClient) buildConversationContext(s *discordgo.Session, m *discor
 	}
 
 	// Add the current message
-	messages = append(messages, AIMessage{
+	messages = append(messages, ai.AIMessage{
 		Role:    "user",
 		Content: c.cleanMessageContent(m.Message),
 	})
@@ -40,8 +35,8 @@ func (c *DiscordClient) buildConversationContext(s *discordgo.Session, m *discor
 	return messages, nil
 }
 
-func (c *DiscordClient) fetchReplyChain(s *discordgo.Session, firstMessage *discordgo.Message, depth int) ([]AIMessage, error) {
-	var messages []AIMessage
+func (c *DiscordClient) fetchReplyChain(s *discordgo.Session, firstMessage *discordgo.Message, depth int) ([]ai.AIMessage, error) {
+	var messages []ai.AIMessage
 	var currentMsg discordgo.Message
 
 	// clone firstMessage into currentMsg
@@ -68,7 +63,7 @@ func (c *DiscordClient) fetchReplyChain(s *discordgo.Session, firstMessage *disc
 			role = "user"
 		}
 
-		messages = append([]AIMessage{{
+		messages = append([]ai.AIMessage{{
 			Role:    role,
 			Content: c.cleanMessageContent(&currentMsg),
 		}}, messages...)
