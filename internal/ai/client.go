@@ -18,8 +18,8 @@ const (
 // NewClient creates a new Mistral AI client
 // If agentID is provided, it will use the agent endpoint
 // Otherwise, it will use the chat completions endpoint with the specified model
-func NewClient(apiKey string, agentID string, model string) *Client {
-	return &Client{
+func NewAIClient(apiKey string, agentID string, model string) *AIClient {
+	return &AIClient{
 		apiKey:  apiKey,
 		agentID: agentID,
 		httpClient: &http.Client{
@@ -30,12 +30,12 @@ func NewClient(apiKey string, agentID string, model string) *Client {
 
 // Chat sends a chat completion request to the Mistral AI API
 // If agentID is set, it uses the agent endpoint, otherwise uses chat completions
-func (c *Client) Chat(messages []AIMessage) (string, error) {
+func (c *AIClient) Chat(messages []AIMessage) (string, error) {
 	return c.chatWithAgent(messages)
 }
 
 // chatWithAgent sends a request to the agent completion endpoint
-func (c *Client) chatWithAgent(messages []AIMessage) (string, error) {
+func (c *AIClient) chatWithAgent(messages []AIMessage) (string, error) {
 	reqBody := AgentRequest{
 		AgentID:  c.agentID,
 		Messages: messages,
@@ -86,7 +86,7 @@ func (c *Client) chatWithAgent(messages []AIMessage) (string, error) {
 }
 
 // ChatSimple is a convenience method for simple single-message requests
-func (c *Client) ChatSimple(userMessage string) (string, error) {
+func (c *AIClient) ChatSimple(userMessage string) (string, error) {
 	messages := []AIMessage{
 		{
 			Role:    "user",

@@ -8,8 +8,8 @@ type AIMessage struct {
 	Content string `json:"content"`
 }
 
-// Client represents a Mistral AI API client
-type Client struct {
+// AIClient represents a Mistral AI API client
+type AIClient struct {
 	apiKey     string
 	httpClient *http.Client
 	agentID    string
