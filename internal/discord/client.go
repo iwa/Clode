@@ -4,21 +4,26 @@ import (
 	"log"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/iwa/Clode/internal/ai"
 )
 
+type MessageGeneratorHandler func(messages []ai.AIMessage) (string, error)
+
 type DiscordClient struct {
-	session *discordgo.Session
-	botID   string
+	session                 *discordgo.Session
+	botID                   string
+	messageGeneratorHandler MessageGeneratorHandler
 }
 
-func NewDiscordClient(discordToken string) (*DiscordClient, error) {
+func NewDiscordClient(discordToken string, handler MessageGeneratorHandler) (*DiscordClient, error) {
 	session, err := discordgo.New("Bot " + discordToken)
 	if err != nil {
 		return nil, err
 	}
 
 	client := &DiscordClient{
-		session: session,
+		session:                 session,
+		messageGeneratorHandler: handler,
 	}
 
 	client.session.Identify.Intents = discordgo.IntentsGuildMessages | discordgo.IntentsDirectMessages | discordgo.IntentsMessageContent
