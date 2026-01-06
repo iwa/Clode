@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/iwa/clode/internal/ai"
+	"github.com/iwa/Clode/internal/ai"
 )
 
 const (
