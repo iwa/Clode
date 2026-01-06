@@ -28,14 +28,14 @@ func (c *DiscordClient) messageCreate(s *discordgo.Session, m *discordgo.Message
 	}
 
 	// Get conversation context
-	messages, err := b.buildConversationContext(s, m)
+	messages, err := c.buildConversationContext(s, m)
 	if err != nil {
 		log.Printf("Error building conversation context: %v", err)
 		return
 	}
 
 	// Get response from Mistral AI
-	response, err := b.mistralClient.Chat(messages)
+	response, err := c.messageGeneratorHandler(messages)
 	if err != nil {
 		log.Printf("Error getting response from AI: %v", err)
 		return
