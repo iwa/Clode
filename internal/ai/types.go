@@ -1,18 +1,9 @@
 package ai
 
-import "net/http"
-
 // AIMessage represents a chat message in AI thread
 type AIMessage struct {
 	Role    string `json:"role"`
 	Content string `json:"content"`
-}
-
-// AIClient represents a Mistral AI API client
-type AIClient struct {
-	apiKey     string
-	httpClient *http.Client
-	agentID    string
 }
 
 // ChatRequest represents a request to the chat completion endpoint

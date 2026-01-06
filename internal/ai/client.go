@@ -15,6 +15,13 @@ const (
 
 // TODO: need to do some cleanup to remove hard-coded use of Mistral Agents
 
+// AIClient represents a Mistral AI API client
+type AIClient struct {
+	apiKey     string
+	httpClient *http.Client
+	agentID    string
+}
+
 // NewClient creates a new Mistral AI client
 // If agentID is provided, it will use the agent endpoint
 // Otherwise, it will use the chat completions endpoint with the specified model
