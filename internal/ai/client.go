@@ -14,6 +14,11 @@ const (
 	MistralBaseURL = "https://api.mistral.ai/v1"
 )
 
+const BaseSystemPrompt = `Important context about conversations:
+- Messages from useres are prefixed with username: to indicate who is speaking.
+- Multiple users may participate in the same conversation - treat them as different individuals.
+- Always address users by their username when relevant.`
+
 // TODO: need to do some cleanup to remove hard-coded use of Mistral Agents
 
 type AIClient struct {
@@ -55,7 +60,13 @@ func NewAIClient(apiKey, mode, model string) (*AIClient, error) {
 
 // Chat sends a chat completion request AI API configured
 func (c *AIClient) Chat(messages []AIMessage) (string, error) {
-	return c.chatWithAgent(messages)
+	// Include system prompt
+	messagesWithSystemPrompt := append([]AIMessage{{
+		Role:    "system",
+		Content: BaseSystemPrompt,
+	}}, messages...)
+
+	return c.chatWithAgent(messagesWithSystemPrompt)
 }
 
 // chatWithAgent sends a request to the agent completion endpoint

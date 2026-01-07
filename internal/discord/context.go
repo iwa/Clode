@@ -1,6 +1,7 @@
 package discord
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/bwmarrin/discordgo"
@@ -29,7 +30,7 @@ func (c *DiscordClient) buildConversationContext(s *discordgo.Session, m *discor
 	// Add the current message
 	messages = append(messages, ai.AIMessage{
 		Role:    "user",
-		Content: c.cleanMessageContent(m.Message),
+		Content: fmt.Sprintf("%s: %s", m.Author.DisplayName(), c.cleanMessageContent(m.Message)),
 	})
 
 	return messages, nil
@@ -44,16 +45,18 @@ func (c *DiscordClient) fetchReplyChain(s *discordgo.Session, firstMessage *disc
 
 	for depth > 0 {
 		// Add message to context
-		var role string
+		var role, content string
 		if currentMsg.Author.ID == c.botID {
 			role = "assistant"
+			content = c.cleanMessageContent(&currentMsg)
 		} else {
 			role = "user"
+			content = fmt.Sprintf("%s: %s", currentMsg.Author.DisplayName(), c.cleanMessageContent(&currentMsg))
 		}
 
 		messages = append([]ai.AIMessage{{
 			Role:    role,
-			Content: c.cleanMessageContent(&currentMsg),
+			Content: content,
 		}}, messages...)
 
 		// Determine the parent message, if any
