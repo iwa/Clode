@@ -19,7 +19,7 @@ const (
 type AIClient struct {
 	apiEndpoint string
 	apiKey      string
-	modelID     string
+	modelID     string // model id or agent id
 	httpClient  *http.Client
 }
 
@@ -62,7 +62,7 @@ func (c *AIClient) Chat(messages []AIMessage) (string, error) {
 // chatWithAgent sends a request to the agent completion endpoint
 func (c *AIClient) chatWithAgent(messages []AIMessage) (string, error) {
 	reqBody := AgentRequest{
-		AgentID:  c.agentID,
+		AgentID:  c.modelID,
 		Messages: messages,
 	}
 
@@ -71,7 +71,7 @@ func (c *AIClient) chatWithAgent(messages []AIMessage) (string, error) {
 		return "", fmt.Errorf("failed to marshal request: %w", err)
 	}
 
-	req, err := http.NewRequest("POST", APIBaseURL+"/agents/completions", bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest("POST", c.apiEndpoint, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return "", fmt.Errorf("failed to create request: %w", err)
 	}
