@@ -6,10 +6,20 @@ import (
 )
 
 type App struct {
-	discordClient discord.DiscordClient
-	aiClient      ai.AIClient
+	DiscordClient discord.DiscordClient
+	AIClient      ai.AIClient
 }
 
-func NewApp() *App {
-	return &App{}
+func NewApp(discordToken, aiKey, agentID string) (*App, error) {
+	aiClient := ai.NewAIClient(aiKey, agentID, "")
+
+	discordClient, err := discord.NewDiscordClient(discordToken, aiClient.Chat)
+	if err != nil {
+		return nil, err
+	}
+
+	return &App{
+		DiscordClient: *discordClient,
+		AIClient:      *aiClient,
+	}, err
 }
