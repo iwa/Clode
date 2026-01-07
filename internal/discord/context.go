@@ -43,6 +43,21 @@ func (c *DiscordClient) fetchReplyChain(s *discordgo.Session, firstMessage *disc
 	currentMsg = *firstMessage
 
 	for depth > 0 {
+		// Add message to context
+		var role string
+		if currentMsg.Author.ID == c.botID {
+			role = "assistant"
+		} else {
+			role = "user"
+		}
+
+		messages = append([]ai.AIMessage{{
+			Role:    role,
+			Content: c.cleanMessageContent(&currentMsg),
+		}}, messages...)
+
+		// Determine the parent message, if any
+		// Break the loop if none found
 		if currentMsg.ReferencedMessage != nil {
 			currentMsg = *currentMsg.ReferencedMessage
 		} else if currentMsg.MessageReference != nil && currentMsg.MessageReference.MessageID != "" {
@@ -56,18 +71,7 @@ func (c *DiscordClient) fetchReplyChain(s *discordgo.Session, firstMessage *disc
 			break
 		}
 
-		var role string
-		if currentMsg.Author.ID == c.botID {
-			role = "assistant"
-		} else {
-			role = "user"
-		}
-
-		messages = append([]ai.AIMessage{{
-			Role:    role,
-			Content: c.cleanMessageContent(&currentMsg),
-		}}, messages...)
-
+		// Decrease depth
 		depth--
 	}
 
