@@ -21,6 +21,8 @@ func (c *DiscordClient) messageCreate(s *discordgo.Session, m *discordgo.Message
 		return
 	}
 
+	log.Printf("Message received from %s in server %s", m.Author.Username, m.GuildID)
+
 	// Show typing indicator
 	err := s.ChannelTyping(m.ChannelID)
 	if err != nil {
