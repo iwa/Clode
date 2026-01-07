@@ -95,7 +95,7 @@ func (c *AIClient) chatWithAgent(messages []AIMessage) (string, error) {
 		if err := json.Unmarshal(body, &errResp); err != nil {
 			return "", fmt.Errorf("API error (status %d): %s", resp.StatusCode, string(body))
 		}
-		return "", fmt.Errorf("API error: %s", errResp.Error.Message)
+		return "", fmt.Errorf("API error (status %d): %s", resp.StatusCode, errResp.Error.Message)
 	}
 
 	var chatResp ChatResponse
