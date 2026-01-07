@@ -53,8 +53,7 @@ func NewAIClient(apiKey, mode, model string) (*AIClient, error) {
 	return nil, fmt.Errorf("unsupported AI client mode: %s", mode)
 }
 
-// Chat sends a chat completion request to the Mistral AI API
-// If agentID is set, it uses the agent endpoint, otherwise uses chat completions
+// Chat sends a chat completion request AI API configured
 func (c *AIClient) Chat(messages []AIMessage) (string, error) {
 	return c.chatWithAgent(messages)
 }
