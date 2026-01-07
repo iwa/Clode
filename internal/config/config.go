@@ -19,8 +19,8 @@ type Config struct {
 type AIMode string
 
 const (
-	AgentMode AIMode = "agent"
-	ChatMode  AIMode = "chat"
+	MistralAPI   AIMode = "mistral-api"
+	MistralAgent AIMode = "mistral-agent"
 )
 
 func NewConfig(discordToken, aiToken, aiMode, aiModel string) *Config {
@@ -53,9 +53,8 @@ func GenerateConfigFromEnv() *Config {
 	aiModel := getRequiredEnv("AI_MODEL")
 
 	aiMode := os.Getenv("AI_MODE")
-	if aiMode == "" || (aiMode != string(AgentMode) && aiMode != string(ChatMode)) {
-		aiMode = "chat"
-		log.Printf("AI_MODE not set or invalid, defaulting to %s", aiMode)
+	if aiMode == "" || (aiMode != string(MistralAPI) && aiMode != string(MistralAgent)) {
+		log.Fatal("AI_MODE not set or invalid")
 	}
 
 	return NewConfig(discordToken, aiToken, aiMode, aiModel)
