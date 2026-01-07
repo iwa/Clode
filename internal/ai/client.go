@@ -10,29 +10,42 @@ import (
 )
 
 const (
-	APIBaseURL = "https://api.mistral.ai/v1"
+	MistralBaseURL = "https://api.mistral.ai/v1"
 )
 
 // TODO: need to do some cleanup to remove hard-coded use of Mistral Agents
 
-// AIClient represents a Mistral AI API client
 type AIClient struct {
-	apiKey     string
-	httpClient *http.Client
-	agentID    string
+	apiEndpoint string
+	apiKey      string
+	modelID     string
+	httpClient  *http.Client
 }
 
-// NewClient creates a new Mistral AI client
-// If agentID is provided, it will use the agent endpoint
-// Otherwise, it will use the chat completions endpoint with the specified model
-func NewAIClient(apiKey string, agentID string, model string) *AIClient {
-	return &AIClient{
-		apiKey:  apiKey,
-		agentID: agentID,
-		httpClient: &http.Client{
-			Timeout: 60 * time.Second,
-		},
+func NewAIClient(apiKey, mode, model string) (*AIClient, error) {
+	if mode == "mistral-agent" {
+		return &AIClient{
+			apiEndpoint: fmt.Sprintf("%s/agents/completions", MistralBaseURL),
+			apiKey:      apiKey,
+			modelID:     model,
+			httpClient: &http.Client{
+				Timeout: 60 * time.Second,
+			},
+		}, nil
 	}
+
+	if mode == "mistral-api" {
+		return &AIClient{
+			apiEndpoint: fmt.Sprintf("%s/chat/completions", MistralBaseURL),
+			apiKey:      apiKey,
+			modelID:     model,
+			httpClient: &http.Client{
+				Timeout: 60 * time.Second,
+			},
+		}, nil
+	}
+
+	return nil, fmt.Errorf("unsupported AI client mode: %s", mode)
 }
 
 // Chat sends a chat completion request to the Mistral AI API

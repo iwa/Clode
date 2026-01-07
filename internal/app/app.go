@@ -11,7 +11,10 @@ type App struct {
 }
 
 func NewApp(discordToken, aiKey, agentID string) (*App, error) {
-	aiClient := ai.NewAIClient(aiKey, agentID, "")
+	aiClient, err := ai.NewAIClient(aiKey, agentID, "")
+	if err != nil {
+		return nil, err
+	}
 
 	discordClient, err := discord.NewDiscordClient(discordToken, aiClient.Chat)
 	if err != nil {
