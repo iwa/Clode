@@ -3,6 +3,8 @@ package config
 import (
 	"log"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -31,6 +33,12 @@ func NewConfig(discordToken, aiToken, aiMode, aiModel string) *Config {
 }
 
 func GenerateConfigFromEnv() *Config {
+	// Parse .env file into runtime env
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, using environment variables")
+	}
+
+	// Local function
 	getRequiredEnv := func(key string) string {
 		if value := os.Getenv(key); value != "" {
 			return value
@@ -39,6 +47,7 @@ func GenerateConfigFromEnv() *Config {
 		return ""
 	}
 
+	// Import required env vars
 	discordToken := getRequiredEnv("DISCORD_TOKEN")
 	aiToken := getRequiredEnv("AI_TOKEN")
 	aiModel := getRequiredEnv("AI_MODEL")
