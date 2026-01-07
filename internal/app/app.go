@@ -7,8 +7,8 @@ import (
 )
 
 type App struct {
-	DiscordClient discord.DiscordClient
-	AIClient      ai.AIClient
+	DiscordClient *discord.DiscordClient
+	AIClient      *ai.AIClient
 }
 
 func NewApp(config *config.Config) (*App, error) {
@@ -23,7 +23,7 @@ func NewApp(config *config.Config) (*App, error) {
 	}
 
 	return &App{
-		DiscordClient: *discordClient,
-		AIClient:      *aiClient,
+		DiscordClient: discordClient,
+		AIClient:      aiClient,
 	}, err
 }
