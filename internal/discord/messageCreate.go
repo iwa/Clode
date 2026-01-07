@@ -74,7 +74,7 @@ func (c *DiscordClient) cleanMessageContent(msg *discordgo.Message) string {
 
 	// Replace user mentions by @username
 	for _, user := range msg.Mentions {
-		cleaned = strings.ReplaceAll(cleaned, fmt.Sprintf("<@%s>", user.ID), "@"+user.Username)
+		cleaned = strings.ReplaceAll(cleaned, fmt.Sprintf("<@%s>", user.ID), "@"+user.DisplayName())
 	}
 
 	// Replace role mentions by @role
