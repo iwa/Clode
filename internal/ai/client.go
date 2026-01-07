@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"time"
 )
@@ -24,6 +25,8 @@ type AIClient struct {
 
 func NewAIClient(apiKey, mode, model string) (*AIClient, error) {
 	if mode == "mistral-agent" {
+		log.Println("Using Mistral Agent mode with agent ID:", model)
+
 		return &AIClient{
 			apiEndpoint: fmt.Sprintf("%s/agents/completions", MistralBaseURL),
 			apiKey:      apiKey,
@@ -35,6 +38,8 @@ func NewAIClient(apiKey, mode, model string) (*AIClient, error) {
 	}
 
 	if mode == "mistral-api" {
+		log.Println("Using Mistral API mode with model ID:", model)
+
 		return &AIClient{
 			apiEndpoint: fmt.Sprintf("%s/chat/completions", MistralBaseURL),
 			apiKey:      apiKey,
